@@ -14,7 +14,7 @@ class GitMan:
         self.uname = uname
         self.session = Github(self.token)
         self.git = self.session.get_repo(self.repo)
-        self.issue = self.git.get_issues().get_page(0)[0]
+        self.issue = self.git.get_issues().reversed[0]
 
     def git_fetch_latest_comment(self, check_is_bot=True) -> tuple:
         latest_comment = self.issue.get_comments().reversed[0]
@@ -254,9 +254,16 @@ class Control:
         ret = sys.modules['extension.{}'.format(name)].run(*args)
         return ret
 
+    def update_token(self, token, repo, expires):
+        with open('./token.txt', 'w', encoding='utf-8') as f:
+            f.write('{} {} {}'.format(token, repo, expires))
+            f.close()
+
     def start(self):
         self.get_config()
         self.load_package()
+
+        self.git.git_commit_comment('> The token will expire on **{}**'.format(self.git.expires))
 
         while 1:
             msg = ''
