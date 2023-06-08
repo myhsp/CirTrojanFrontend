@@ -234,7 +234,7 @@ class Control:
         for p in pip_packages:
             try:
                 exec('import {}'.format(p))
-            except ModuleNotFoundError:
+            except:
                 pip_packages_need_install.append(p)
 
         if len(pip_packages_need_install) != 0:
@@ -317,7 +317,7 @@ class Control:
                                     exec('import extension.{}'.format(name))
                                     r += render_notice(self.run_module(name, *args),
                                                        ContentRenderer.NoticeType.INFO) + '\n'
-                                except ModuleNotFoundError:
+                                except:
                                     r += render_notice('Module not found.', ContentRenderer.NoticeType.FATAL)
 
                     elif cmd_type == CommandParserType.CMD_LOAD_CONFIG:
