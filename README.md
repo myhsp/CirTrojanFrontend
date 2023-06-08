@@ -1,7 +1,7 @@
 # Cirno Trojan Frontend
 你校电子班牌迫真后台，巨大多屎山，，，
 
-Remove GS, Macrohard strong!
+`Remove GS, Macrohard strong!`
 
 高雅后台，挖矿开服行为艺术开学校大型 impart 必备
 
@@ -21,7 +21,7 @@ load_config
 <module 1> <dependency 1>; <dependency 2>; ...
 <module 2> <dependency 1>; <dependency 2>; ...
 ```
-### 运行 shenll 指令
+### 运行 shell 指令
 直接输入
 ### 运行 Control 类 内部指令
 输入
