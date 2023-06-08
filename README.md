@@ -1,6 +1,10 @@
 # Cirno Trojan Frontend
 你校电子班牌迫真后台，巨大多屎山，，，
 
+Remove GS, Macrohard strong!
+
+高雅后台，挖矿开服行为艺术开学校大型 impart 必备
+
 # 使用
 ## 调用
 ```python
