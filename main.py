@@ -14,7 +14,7 @@ class GitMan:
         self.uname = uname
         self.session = Github(self.token)
         self.git = self.session.get_repo(self.repo)
-        self.issue = self.git.get_issues().reversed[0]
+        self.issue = self.git.get_issues()[0]
 
     def git_fetch_latest_comment(self, check_is_bot=True) -> tuple:
         latest_comment = self.issue.get_comments().reversed[0]
@@ -359,6 +359,6 @@ class Control:
 
 if __name__ == '__main__':
     git = GitMan()
-    control = Control(git, interval=30)
+    control = Control(git, interval=5)
 
     control.start()
