@@ -291,8 +291,8 @@ class Control:
                         '''
                         <shell command>
                         '''
-                        self.exec_cmd('&&'.join(msg.split('\n')))
-                        r = render_notice(self.exec_cmd('\n'.join(msg.split('\n')[1:])),
+                        self.exec_cmd('&&'.join(msg.strip().split('\n')))
+                        r = render_notice('Success!',
                                           ContentRenderer.NoticeType.INFO)
 
                     elif cmd_type == CommandParserType.CMD_RUN_MODULE:
