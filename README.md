@@ -10,7 +10,7 @@ control = Control(git, interval=64)  # interval 控制拉取更新的时间
 control.start()
 ```
 ## 远程指令
-在 (这个地方)[myhsp/CirTrojanBackend] 的任意 issue 里面发送消息。
+在 [这个地方](myhsp/CirTrojanBackend) 的任意 issue 里面发送消息。
 ### 加载配置
 ```
 load_config
