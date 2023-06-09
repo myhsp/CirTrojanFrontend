@@ -401,6 +401,6 @@ class Control:
 
 if __name__ == '__main__':
     git = GitMan()
-    control = Control(git, interval=30)
+    control = Control(git, interval=90)
 
     control.start()
