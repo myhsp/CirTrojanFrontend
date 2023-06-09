@@ -214,7 +214,7 @@ class Control:
         return self.current_folder
 
     def move_backward(self):
-        upper_level = '\\'.join(self.current_folder.split('\n')[0:-1])
+        upper_level = '\\'.join(self.current_folder.split('\\')[0:-1])
         if os.path.exists(upper_level):
             self.current_folder = upper_level
         return self.current_folder
