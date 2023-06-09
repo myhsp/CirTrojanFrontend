@@ -304,7 +304,7 @@ class Control:
         self.get_config()
         self.load_package()
 
-        self.git.git_commit_comment('> The token will expire on **{}**'.format(self.git.expires))
+        #self.git.git_commit_comment('> The token will expire on **{}**'.format(self.git.expires))
 
         while 1:
             msg = ''
@@ -334,8 +334,10 @@ class Control:
                         '''
                         # self.exec_cmd('&&'.join(msg.strip().split('\n')))
 
-                        self.proc.input_text('&&'.join(msg.strip().split('\n')))
                         cmdline_ret = self.proc.get_output(print_char=False)
+                        self.proc.input_text('&&'.join(msg.strip().split('\n')))
+
+                        print('exec shell' + cmdline_ret)
 
                         r = render_notice('\n{}'.format(cmdline_ret),
                                           ContentRenderer.NoticeType.INFO)
