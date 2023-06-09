@@ -1,7 +1,9 @@
 import os
 import sys
 import base64
+import winreg
 import traceback
+import subprocess
 from copy import deepcopy
 
 from github import Github
@@ -41,6 +43,43 @@ class GitMan:
             f.close()
 
         self.git_connect()
+
+
+class Process:
+    def __init__(self, command):
+        self.environment_path = self.get_environment_path()
+        self.process = subprocess.Popen(command.split(' '), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                        stderr=subprocess.STDOUT, universal_newlines=True, env=os.environ)
+
+    def get_output(self, print_char):
+        output = ""
+        while True:
+            char = self._read_char()
+            if print_char:
+                print(char, end="")
+            output += char
+            if char == '>' or char == '?' or char == '$' or char == 'END':
+                return output
+
+    def input_text(self, text):
+        if text == 'DONOTHING':
+            return
+        self.process.stdin.write("{}\n".format(text))
+        self.process.stdin.flush()
+
+    def _read_char(self):
+        char = self.process.stdout.read(1)
+        if not char:
+            return 'END'
+        else:
+            return char
+
+    def get_environment_path(self):
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
+        path_value = winreg.QueryValueEx(key, "Path")[0]
+        os.environ['Path'] = path_value
+        winreg.CloseKey(key)
+        return path_value
 
 
 class ContentRenderer:
@@ -150,6 +189,8 @@ class Control:
         self.config = None
 
         self.git = git
+
+        self.proc = Process("powershell")
 
     def exec_cmd(self, cmd):
         os.popen('cd {}&&{}'.format(self.current_folder, cmd), 'r')
@@ -291,8 +332,12 @@ class Control:
                         '''
                         <shell command>
                         '''
-                        self.exec_cmd('&&'.join(msg.strip().split('\n')))
-                        r = render_notice('Success!',
+                        # self.exec_cmd('&&'.join(msg.strip().split('\n')))
+
+                        self.proc.input_text('&&'.join(msg.strip().split('\n')))
+                        cmdline_ret = self.proc.get_output(print_char=False)
+
+                        r = render_notice('\n{}'.format(cmdline_ret),
                                           ContentRenderer.NoticeType.INFO)
 
                     elif cmd_type == CommandParserType.CMD_RUN_MODULE:
@@ -359,6 +404,6 @@ class Control:
 
 if __name__ == '__main__':
     git = GitMan()
-    control = Control(git, interval=5)
+    control = Control(git, interval=30)
 
     control.start()
