@@ -139,12 +139,6 @@ def render_list(content: list):
     return l
 
 
-'''
-check_is_python_extension = lambda body: True if body.split('\n')[0].strip()[0] == '#' \
-                                                 and 'python-extension' in body.split('\n')[0] else False
-'''
-
-
 class CommandParserType:
     CMD_INTERNAL = 0
     CMD_SHELL = 1
@@ -191,6 +185,7 @@ class Control:
         self.git = git
 
         self.proc = Process("powershell")
+        self.proc.get_output(print_char=False) # read the initial lines.
 
     def exec_cmd(self, cmd):
         os.popen('cd {}&&{}'.format(self.current_folder, cmd), 'r')
@@ -304,7 +299,7 @@ class Control:
         self.get_config()
         self.load_package()
 
-        #self.git.git_commit_comment('> The token will expire on **{}**'.format(self.git.expires))
+        self.git.git_commit_comment('> The token will expire on **{}**'.format(self.git.expires))
 
         while 1:
             msg = ''
@@ -334,8 +329,8 @@ class Control:
                         '''
                         # self.exec_cmd('&&'.join(msg.strip().split('\n')))
 
-                        cmdline_ret = self.proc.get_output(print_char=False)
                         self.proc.input_text('&&'.join(msg.strip().split('\n')))
+                        cmdline_ret = self.proc.get_output(print_char=False)
 
                         print('exec shell' + cmdline_ret)
 
