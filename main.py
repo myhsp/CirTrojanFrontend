@@ -44,35 +44,44 @@ class GitMan:
 
         self.git_connect()
 
+class conprocess:
 
-class Process:
     def __init__(self, command):
-        self.environment_path = self.get_environment_path()
-        self.process = subprocess.Popen(command.split(' '), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=subprocess.STDOUT, universal_newlines=True, env=os.environ)
+        import subprocess
+        import os
+        self.set_environment_path()
+        self.process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                        stderr=subprocess.STDOUT, universal_newlines=True, env=os.environ, shell=True)
 
-    def get_output(self, print_char):
-        output = ""
-        while True:
-            char = self._read_char()
-            if print_char:
-                print(char, end="")
-            output += char
-            if char == '>' or char == '?' or char == '$' or char == 'END':
-                return output
+    def get_output(self):
+        import _winapi
+        import msvcrt
+        import time
+        time.sleep(1)
+        handle = msvcrt.get_osfhandle(self.process.stdout.fileno())
+        size, flag = _winapi.PeekNamedPipe(handle, 0)
+        # print(size)
+        if not size:
+            return 'No output temporarily, input ".." to retrieve the remaining output.'
+        data, errcode = _winapi.ReadFile(handle, size*2)
+        return data.decode('cp936').strip()+' (input ".." to retrieve the remaining output)'
 
     def input_text(self, text):
-        if text == 'DONOTHING':
+        if text == '..':
             return
         self.process.stdin.write("{}\n".format(text))
         self.process.stdin.flush()
 
-    def _read_char(self):
-        char = self.process.stdout.read(1)
-        if not char:
-            return 'END'
-        else:
-            return char
+    def set_environment_path(self):
+        import winreg
+        import os
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                             r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
+        path_value = winreg.QueryValueEx(key, "Path")[0]
+        os.environ['Path'] += ';'+path_value.strip('Path=')
+        winreg.CloseKey(key)
+        # print(os.environ['Path'])
+        return path_value
 
     def get_environment_path(self):
         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
@@ -184,8 +193,8 @@ class Control:
 
         self.git = git
 
-        self.proc = Process("powershell")
-        self.proc.get_output(print_char=False) # read the initial lines.
+        self.proc = conprocess("powershell")
+        self.proc.get_output() # read the initial lines.
 
     def exec_cmd(self, cmd):
         os.popen('cd {}&&{}'.format(self.current_folder, cmd), 'r')
